@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let navigationController = window!.rootViewController as! UINavigationController
         applicationController = ApplicationController(navigationController: navigationController)
+        
+        // Start the navigation
         applicationController?.coordinator.start()
         
         return true

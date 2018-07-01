@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+/// Flickr search results that carry either the search data or error.
 struct FlickrSearchResult {
     var searchText:String = ""
     let photos: [FlickrPhoto]?

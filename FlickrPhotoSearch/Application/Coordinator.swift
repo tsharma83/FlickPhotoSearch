@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+/// This class drives the navigation heirarchy of the application. It knows about all the viewcontrollers and their view models.
 class Coordinator {
     //MARK: - Private
     fileprivate let navigationController: UINavigationController

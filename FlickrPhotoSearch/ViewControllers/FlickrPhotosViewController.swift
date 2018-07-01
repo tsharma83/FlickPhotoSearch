@@ -21,8 +21,10 @@ class FlickrPhotosViewController: UICollectionViewController {
     //MARK: - Dependencies
     var viewModel:FlickrPhotosViewModel!
     
+    // Overlay view for showing error/empty/initial message
     @IBOutlet weak var overlayView: UIView!
     @IBOutlet weak var overlayViewLabel: UILabel!
+    
     @IBOutlet private var searchField: UITextField!
     
     //MARK: - Lifecycle
@@ -30,43 +32,34 @@ class FlickrPhotosViewController: UICollectionViewController {
         super.viewDidLoad()
         
         self.title = "Photos"
-        self.collectionView!.register(UINib(nibName: "LoadingFooterView", bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: loadingFooterViewReuseIdentifier)
         
+        configureCollectionView()
+        configureOverlay()
+        bindViewModel()
+        
+        // TODO: If you use bindings b/w VC and VM then this should not be necessary.
+        setAppropriateView(for: .untriggered)
+    }
+    
+    //MARK: - Configuration
+    private func configureOverlay() {
         view.addSubview(overlayView)
         setOverlayViewConstraints()
         overlayView.isHidden = true
-        
+    }
+    
+    private func configureCollectionView() {
+        collectionView!.register(UINib(nibName: "LoadingFooterView", bundle: nil),
+                                      forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: loadingFooterViewReuseIdentifier)
+    }
+    
+    private func bindViewModel() {
         viewModel.didChangeState = { [weak self] state in
             DispatchQueue.main.async {
                 self?.setAppropriateView(for: state)
                 self?.collectionView?.reloadData()
             }
         }
-        
-        // TODO: If you use bindings b/w VC and VM then this should not be necessary.
-        setAppropriateView(for: .untriggered)
-    }
-    
-    //MARK: - Actions
-    
-    @IBAction func search(_ sender: UIBarButtonItem) {
-        
-        if searchField.isHidden {
-            searchField.isHidden = false
-            navigationItem.titleView = searchField
-            return
-        }
-        
-        guard let query = searchField.text,!query.isEmpty else { return }
-        
-        navigationItem.titleView = nil
-        title = searchField.text
-        searchField.isHidden = true
-        loadPhotos(matching: query)
-    }
-    
-    fileprivate func loadPhotos(matching query:String) {
-        viewModel.loadPhotos(matching: query)
     }
     
     private func setAppropriateView(for state:State) {
@@ -107,8 +100,31 @@ class FlickrPhotosViewController: UICollectionViewController {
         }
     }
     
-    // MARK: UICollectionViewDataSource
+    //MARK: - Actions
     
+    @IBAction func search(_ sender: UIBarButtonItem) {
+        
+        if searchField.isHidden {
+            searchField.isHidden = false
+            navigationItem.titleView = searchField
+            return
+        }
+        
+        guard let query = searchField.text,!query.isEmpty else { return }
+        
+        navigationItem.titleView = nil
+        title = searchField.text
+        searchField.isHidden = true
+        loadPhotos(matching: query)
+    }
+    
+    fileprivate func loadPhotos(matching query:String) {
+        viewModel.loadPhotos(matching: query)
+    }
+}
+
+// MARK: UICollectionViewDataSource
+extension FlickrPhotosViewController {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -143,7 +159,10 @@ class FlickrPhotosViewController: UICollectionViewController {
             return headerView
         }
     }
-    
+}
+
+// MARK: UIScrollViewDelegate
+extension FlickrPhotosViewController {
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         // UITableView only moves in one direction, y axis
         let currentOffset = scrollView.contentOffset.y
@@ -156,6 +175,7 @@ class FlickrPhotosViewController: UICollectionViewController {
     }
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
 extension FlickrPhotosViewController : UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView,

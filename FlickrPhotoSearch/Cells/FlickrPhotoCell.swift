@@ -11,6 +11,8 @@ import UIKit
 class FlickrPhotoCell: UICollectionViewCell {
     
     @IBOutlet var photoImageView: UIImageView!
+    
+    // Unique identifier for this cell, so that when setting the image for this cell we can compare it to it's viewModel's identifier.
     private(set) var uniqueId: String?
     
     func configure(with cellModel:FlickrPhotoCellModel) {
@@ -22,9 +24,11 @@ class FlickrPhotoCell: UICollectionViewCell {
         cellModel.didUpdate = { [weak self] cellViewModel in
             
             // Set the image only if cell's unique id and cellViewModel's fileURL match.
+            // If this cell has been reused by the time image is downloaded
+            // then both of these values will be different.
             guard let uniqueId = self?.uniqueId,
                 uniqueId == cellViewModel.photo.fileURL
-                else { print("Returning"); return }
+                else { return }
             
             self?.photoImageView.image = cellViewModel.image
         }

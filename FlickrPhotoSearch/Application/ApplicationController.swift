@@ -9,8 +9,11 @@
 import Foundation
 import UIKit
 
+
+/// This class is used creating application level instances. (Application Factory)
 class ApplicationController {
     //MARK: - Dependencies
+    // User interface starting navigation controller
     fileprivate let navigationController: UINavigationController
     
     //MARK: Shared Instances

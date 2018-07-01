@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// State of content loading
 enum State {
     case loading
     case untriggered

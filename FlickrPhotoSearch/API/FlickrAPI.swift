@@ -20,6 +20,8 @@ enum FlickrAPIError: Error, CustomStringConvertible {
     }
 }
 
+
+/// Flickr specific web APIs
 class FlickrAPI {
     
     //MARK: - Private

@@ -10,9 +10,14 @@ import Foundation
 
 struct FlickrAPIResponse: Decodable {
     let photo: [FlickrPhoto]
+    
+    // Current page
     let page: Int
+    
+    // Total pages
     let pages: Int
     
+    // Top level "photos" object
     enum CodingKeys: String, CodingKey {
         case photos
     }
